@@ -1,0 +1,40 @@
+---
+- name: Setup .NET Hello World on AWS Ubuntu 22
+  hosts: 127.0.0.1
+  connection: local
+  become: true
+
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install .NET SDK 8
+      apt:
+        name: dotnet-sdk-8.0
+        state: present
+
+    - name: Remove existing HelloWorldApp directory
+      file:
+        path: /home/ubuntu/HelloWorldApp
+        state: absent
+
+    - name: Create Hello World app directory
+      command: dotnet new web -o HelloWorldApp
+      args:
+        chdir: /home/ubuntu
+
+    - name: Update Program.cs with Hello World code
+      copy:
+        dest: /home/ubuntu/HelloWorldApp/Program.cs
+        content: |
+          var builder = WebApplication.CreateBuilder(args);
+          var app = builder.Build();
+          app.MapGet("/", () => "Hello World!");
+          app.Run("http://*:5000");
+
+    - name: Run the .NET application
+      command: dotnet run
+      args:
+        chdir: /home/ubuntu/HelloWorldApp
