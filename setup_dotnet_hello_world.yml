@@ -1,6 +1,6 @@
 ---
 - name: Setup .NET Hello World on AWS Ubuntu 22
-  hosts: 127.0.0.1
+  hosts: 107.23.0.236
   connection: local
   become: true
 
